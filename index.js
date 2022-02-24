@@ -61,8 +61,15 @@ app.delete('/users/:userId', (req, res) => {
   }
 })
 
+const generateId = ([...arr]) => {
+  const maxId = arr.length > 0
+    ? Math.max(...arr.map(n => n.id))
+    : 0
+  return maxId + 1
+}
+
 app.post('/users', (req, res) => {
-  console.log(req.body)
+  console.log(generateId(users))
   res.sendStatus(201)
 })
 
