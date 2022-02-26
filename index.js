@@ -22,6 +22,10 @@ app.use('/items', items)
 const cookieParser = require('cookie-parser')
 app.use(cookieParser(secrets.jwtSignKey));
 
+app.get("/", (req, res) => {
+  res.send("Hello World!")
+})
+
 // POST /singin - Sing in operation.
 app.post('/signin', passport.authenticate('basic', { session: false }), (req, res) => {
   const payloadData = {

@@ -150,5 +150,7 @@ itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemVali
   }
 })
 
+// TODO: serach - operation
+
 // Export the router.
 module.exports = itemsRouter
