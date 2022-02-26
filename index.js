@@ -7,23 +7,29 @@ const secrets = require('./secrets.json')
 const app = express()
 const port = 3000
 
-const users = require('./routes/users')
-
+// JSON body-parser middleware. Express 4.16+ has it's own body-parser
+// so no third party package is needed.
 app.use(express.json())
 
-app.get('/', (req, res) => {
-  res.send('Hello World')
-})
+// Routes
+const users = require('./routes/users')
+const items = require('./routes/items')
 
 app.use('/users', users)
+app.use('/items', items)
 
+// Cookie parser
+const cookieParser = require('cookie-parser')
+app.use(cookieParser(secrets.jwtSignKey));
+
+// POST /singin - Sing in operation.
 app.post('/signin', passport.authenticate('basic', { session: false }), (req, res) => {
   const payloadData = {
     userId: req.user.id
   }
 
   const token = jwt.sign(payloadData, secrets.jwtSignKey)
-
+  res.cookie('userId', req.user.id, {signed: true})
   res.json({ token: token })
 })
 

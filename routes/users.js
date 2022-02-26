@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs')
 const usersRouter = express.Router()
 const secrets = require('../secrets.json')
 
-
 // users - Array for storing information about the users. 
 // It's been populated by some example users.
 let users = [
@@ -19,7 +18,12 @@ let users = [
     country: "Finland",
     email: "matti.meikalainen@email.com",
     username: "MattiM",
-    password: "#123456abcde"
+    password: "#123456abcde",
+    items: [
+      {
+        id: 1
+      }
+    ]
   },
   {
     id: uuidv4(),
@@ -31,24 +35,45 @@ let users = [
     country: "Finland",
     email: "liisa.ihmemaa@email.com",
     username: "Lizzu90",
-    password: "102938_akdjfh"
+    password: "102938_akdjfh",
+    items: []
   }
 ]
+
+// Event handlers
+const service = require('../sharedService')
+
+service.onAddItem((userId, itemId) => {
+  const user = users.find(user => user.id === userId)
+  const item = {id: itemId}
+  user.items.push(item)
+})
+
+service.onRemoveItem((userId, itemId) => {
+  const user = users.find(user => user.id === userId)
+  user.items = user.items.filter( item => item.id !== itemId) 
+  console.log(user)
+  console.log(itemId)
+  console.log(user.items)
+})
 
 // JSON body-parser middleware. Express 4.16+ has it's own body-parser
 // so no third party package is needed.
 usersRouter.use(express.json());
 
-// My middlewares
-// userValidateMW - Is used to validate the user information.
-const userValidateMW = (req, res, next) => {
-  const validationResult = userValidator(req.body)
-  if (validationResult == true) {
-    next()
-  } else {
-    res.sendStatus(400)
-  }
-}
+// Include items route.
+const items = require('./items')
+usersRouter.use('/items', items)
+
+// Ajv - JSON schema validator releated
+const Ajv = require('ajv')
+const ajv = new Ajv()
+
+const userSchema = require('../schemas/user.schema.json')
+const userValidator = ajv.compile(userSchema)
+
+const itemSchema = require('../schemas/item.schema.json')
+const itemValidator = ajv.compile(itemSchema)
 
 // Passport - HTTP Basic authentication related
 const BasicStrategy = require('passport-http').BasicStrategy
@@ -78,24 +103,37 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
   done(null, user)
 }))
 
-// Ajv - JSON schema validator releated
-const Ajv = require('ajv')
-const ajv = new Ajv()
+// Cookie parser
+const cookieParser = require('cookie-parser')
+usersRouter.use(cookieParser(secrets.jwtSignKey));
 
-const userSchema = require('../schemas/user.schema.json')
-const userValidator = ajv.compile(userSchema)
+// My middlewares
+// userValidateMW - Is used to validate the user information.
+const userValidateMW = (req, res, next) => {
+  const validationResult = userValidator(req.body)
+  if (validationResult == true) {
+    next()
+  } else {
+    res.sendStatus(400)
+  }
+}
 
+// itemValidateMW - Is used to validate the item information.
+const itemValidateMW = (req, res, next) => {
+  const validationResult = itemValidator(req.body)
+  if (validationResult == true) {
+    next()
+  } else {
+    res.sendStatus(400)
+  }
+}
+
+
+// GET / - Get All User Info
+// NOTE: Test purpose only.
 usersRouter.get('/', (req, res) => {
   res.json(users)
 })
-
-/*usersRouter.get('/httpBasicSecured', passport.authenticate('basic', { session: false }), (req, res) => {
-  res.sendStatus(200)
-})
-
-usersRouter.get('/jwtSecured', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.json({ status: "OK, toimii", user: req.user.username })
-})*/
 
 // GET /:userId - Get User Info by User ID
 usersRouter.get('/:userId', (req, res) => {
@@ -110,7 +148,7 @@ usersRouter.get('/:userId', (req, res) => {
   }
 })
 
-// DELETE /:userId - Delete User Info by User ID. Needs JSON Web Token.
+// DELETE /:userId - Delete User Info by User ID. JSON Web Token needed.
 usersRouter.delete('/:userId', passport.authenticate('jwt', { session: false }), (req, res) => {
   const id = req.params.userId
   const user = users.find(user => user.id === id)
@@ -123,7 +161,7 @@ usersRouter.delete('/:userId', passport.authenticate('jwt', { session: false }),
   }
 })
 
-// PUT /:userId - Update User Info by User ID. . Needs JSON Web Token.
+// PUT /:userId - Update User Info by User ID. JSON Web Token needed.
 usersRouter.put('/:userId', passport.authenticate('jwt', { session: false }), userValidateMW, (req, res) => {
   const id = req.params.userId
   let user = users.find(user => user.id === id)
@@ -166,10 +204,78 @@ usersRouter.post('/', userValidateMW, (req, res) => {
     country: req.body.country,
     email: req.body.email,
     username: req.body.username,
-    password: hashedPassword
+    password: hashedPassword,
+    items: []
   })
 
   res.sendStatus(201)
 })
 
+// GET /:userId/items - Get User's item IDs
+usersRouter.get('/:userId/items', (req, res) => {
+  const id = req.params.userId
+  const user = users.find(user => user.id === id)
+
+  if (user) {
+    res.json(user.items)
+    res.sendStatus(200)
+  } else {
+    res.sendStatus(404)
+  }
+})
+
+// POST /items - Create a New item
+/*usersRouter.post('/items', passport.authenticate('jwt', { session: false }), itemValidateMW, (req, res) => {
+  const userId = req.signedCookies['userId']
+
+  if (userId) {
+    const item = {
+      title: req.body.title,
+      description: req.body.description,
+      category: req.body.category,
+      askingPrice: req.body.askingPrice,
+      dateOfPosting: req.body.dateOfPosting,
+      deliveryType: req.body.deliveryType,
+      sellerId: userId,
+      city: req.body.city,
+      county: req.body.county,
+      country: req.body.country,
+    }
+
+    // Emit a createItem-event.
+    service.createItem(item)
+    res.sendStatus(201)
+  } else {
+    res.sendStatus(400)
+  }
+})*/
+
+// PUT /items - Update an item
+/*usersRouter.put('/items/:itemId', passport.authenticate('jwt', { session: false }), itemValidateMW, (req, res) => {
+  userId = req.signedCookies['userId']
+
+  if (userId) {
+    const item = {
+      title: req.body.title,
+      description: req.body.description,
+      category: req.body.category,
+      askingPrice: req.body.askingPrice,
+      dateOfPosting: req.body.dateOfPosting,
+      deliveryType: req.body.deliveryType,
+      sellerId: userId,
+      city: req.body.city,
+      county: req.body.county,
+      country: req.body.country,
+    }
+
+    // Emit a createItem-event.
+    service.createItem(item)
+    res.sendStatus(201)
+  } else {
+    res.sendStatus(400)
+  }
+})*/
+
+
+// Export the router.
 module.exports = usersRouter
