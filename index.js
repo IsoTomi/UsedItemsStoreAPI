@@ -2,7 +2,7 @@ const express = require('express')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
 
-const secrets = require('./secrets.json')
+//const secrets = require('./secrets.json')
 
 const app = express()
 const port = process.env.PORT || 80
