@@ -221,58 +221,5 @@ usersRouter.get('/:userId/items', (req, res) => {
   }
 })
 
-// POST /items - Create a New item
-/*usersRouter.post('/items', passport.authenticate('jwt', { session: false }), itemValidateMW, (req, res) => {
-  const userId = req.signedCookies['userId']
-
-  if (userId) {
-    const item = {
-      title: req.body.title,
-      description: req.body.description,
-      category: req.body.category,
-      askingPrice: req.body.askingPrice,
-      dateOfPosting: req.body.dateOfPosting,
-      deliveryType: req.body.deliveryType,
-      sellerId: userId,
-      city: req.body.city,
-      county: req.body.county,
-      country: req.body.country,
-    }
-
-    // Emit a createItem-event.
-    service.createItem(item)
-    res.sendStatus(201)
-  } else {
-    res.sendStatus(400)
-  }
-})*/
-
-// PUT /items - Update an item
-/*usersRouter.put('/items/:itemId', passport.authenticate('jwt', { session: false }), itemValidateMW, (req, res) => {
-  userId = req.signedCookies['userId']
-
-  if (userId) {
-    const item = {
-      title: req.body.title,
-      description: req.body.description,
-      category: req.body.category,
-      askingPrice: req.body.askingPrice,
-      dateOfPosting: req.body.dateOfPosting,
-      deliveryType: req.body.deliveryType,
-      sellerId: userId,
-      city: req.body.city,
-      county: req.body.county,
-      country: req.body.country,
-    }
-
-    // Emit a createItem-event.
-    service.createItem(item)
-    res.sendStatus(201)
-  } else {
-    res.sendStatus(400)
-  }
-})*/
-
-
 // Export the router.
 module.exports = usersRouter

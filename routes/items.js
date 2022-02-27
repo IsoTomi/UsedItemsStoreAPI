@@ -151,19 +151,7 @@ itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemVali
 })
 
 itemsRouter.get('/search', (req, res) => {
-  /*const query = req.query.query
-  const category = req.query.category
-  const location = req.query.location
-  const date = req.query.date
-
-  let filteredItems = []
-
-  if (query) {
-    filteredItems = items.title.filter(query)
-  }*/
-
-  res.send("Huhuu")
-  //res.json(filteredItems)
+  res.json(items)
 })
 
 // Export the router.
