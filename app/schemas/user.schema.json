@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "User info schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": {},
+  "examples": [
+      {
+          "id": "37679b4e-f297-491e-ad90-dda73a08f36f",
+          "firstName": "Matti",
+          "lastName": "Meikäläinen",
+          "dateOfBirth": "1984-07-26",
+          "city": "Oulu",
+          "county": "Pohjois-Pohjanmaa",
+          "country": "Finland",
+          "email": "matti.meikalainen@email.com",
+          "username": "MattiM",
+          "password": "#123456abcde",
+          "items": [
+              {
+                  "id": 0
+              },
+              {
+                  "id": 1
+              }
+          ]
+      }
+  ],
+  "required": [
+      "firstName",
+      "lastName",
+      "dateOfBirth",
+      "city",
+      "county",
+      "country",
+      "email",
+      "username",
+      "password"
+  ],
+  "properties": {
+      "id": {
+          "$id": "#/properties/id",
+          "type": "string",
+          "title": "The id schema",
+          "description": "Describes user's id property.",
+          "default": "Id is unique value used to identify user.",
+          "examples": [
+              "37679b4e-f297-491e-ad90-dda73a08f36f"
+          ]
+      },
+      "firstName": {
+          "$id": "#/properties/firstName",
+          "type": "string",
+          "title": "The first name schema",
+          "description": "Describes user's firstName property.",
+          "default": "",
+          "examples": [
+              "Matti"
+          ]
+      },
+      "lastName": {
+          "$id": "#/properties/lastName",
+          "type": "string",
+          "title": "The last name schema",
+          "description": "Describes user's lastName property.",
+          "default": "",
+          "examples": [
+              "Meikäläinen"
+          ]
+      },
+      "dateOfBirth": {
+          "$id": "#/properties/dateOfBirth",
+          "type": "string",
+          "title": "The date of birth schema",
+          "description": "Describes user's dateOfBirth property. ISO8601 format: YYYY-MM-DD",
+          "default": "",
+          "examples": [
+              "1984-07-26"
+          ]
+      },
+      "city": {
+          "$id": "#/properties/city",
+          "type": "string",
+          "title": "The city schema",
+          "description": "Describes user's city property.",
+          "default": "",
+          "examples": [
+              "Oulu"
+          ]
+      },
+      "county": {
+          "$id": "#/properties/county",
+          "type": "string",
+          "title": "The county schema",
+          "description": "Describes user's county property.",
+          "default": "",
+          "examples": [
+              "Pohjois-Pohjanmaa"
+          ]
+      },
+      "country": {
+          "$id": "#/properties/country",
+          "type": "string",
+          "title": "The country schema",
+          "description": "Describes user's country property.",
+          "default": "",
+          "examples": [
+              "Finland"
+          ]
+      },
+      "email": {
+          "$id": "#/properties/email",
+          "type": "string",
+          "title": "The email schema",
+          "description": "Describes user's email property.",
+          "default": "",
+          "examples": [
+              "matti.meikalainen@email.com"
+          ]
+      },
+      "username": {
+          "$id": "#/properties/username",
+          "type": "string",
+          "title": "The username schema",
+          "description": "Describes user's username property.",
+          "default": "",
+          "examples": [
+              "MattiM"
+          ]
+      },
+      "password": {
+          "$id": "#/properties/password",
+          "type": "string",
+          "title": "The password schema",
+          "description": "Describes user's password property.",
+          "default": "",
+          "examples": [
+              "#123456abcde"
+          ]
+      },
+      "items": {
+        "$id": "#/properties/items",
+        "type": "array",
+        "title": "The items schema",
+        "description": "Array of user's posted item ID's",
+        "default": [],
+        "examples": [
+            []
+        ],
+        "items": {
+            "$id": "#/properties/items/items"
+        }
+    }
+  },
+  "additionalProperties": true
+}
