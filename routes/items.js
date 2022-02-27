@@ -35,7 +35,7 @@ const itemValidator = ajv.compile(itemSchema)
 
 // Cookie parser
 const cookieParser = require('cookie-parser')
-itemsRouter.use(cookieParser(secrets.process.env.jwtSignKey));
+itemsRouter.use(cookieParser(process.env.jwtSignKey));
 
 // itemValidateMW - Is used to validate the item information.
 const itemValidateMW = (req, res, next) => {
