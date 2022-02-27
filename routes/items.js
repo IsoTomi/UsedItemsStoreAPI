@@ -162,7 +162,8 @@ itemsRouter.get('/search', (req, res) => {
     filteredItems = items.title.filter(query)
   }
 
-  res.json(filteredItems)
+  res.send("Huhuu")
+  //res.json(filteredItems)
 })
 
 // Export the router.
