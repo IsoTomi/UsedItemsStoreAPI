@@ -63,7 +63,13 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
 
 itemsRouter.get('/search', (req, res) => {
   const query = req.query.query
-  res.send(query)
+  const category = req.query.category
+  const location = req.query.location
+  const date = req.query.date
+
+  filteredItems = items.query.filter(query)
+
+  res.json(filteredItems)
 })
 
 // GET / - Get All Item Info
