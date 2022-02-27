@@ -61,6 +61,10 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
   done(null, user)
 }))
 
+itemsRouter.get('/search', (req, res) => {
+  res.json(items)
+})
+
 // GET / - Get All Item Info
 itemsRouter.get('/', (req, res) => {
   res.json(items)
@@ -150,9 +154,7 @@ itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemVali
   }
 })
 
-itemsRouter.get('/search', (req, res) => {
-  res.json(items)
-})
+
 
 // Export the router.
 module.exports = itemsRouter
