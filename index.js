@@ -26,6 +26,10 @@ app.get("/", (req, res) => {
   res.send("Hello World!")
 })
 
+app.get('/', (req, res) => {
+  res.send("Hello World!")
+})
+
 // POST /singin - Sing in operation.
 app.post('/signin', passport.authenticate('basic', { session: false }), (req, res) => {
   const payloadData = {
