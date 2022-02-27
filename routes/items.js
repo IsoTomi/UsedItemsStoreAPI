@@ -1,6 +1,6 @@
 const express = require('express')
 const itemsRouter = express.Router()
-const secrets = require('../secrets.json')
+//const secrets = require('../secrets.json')
 const service = require('../sharedService')
 
 // items - Array for storing information about the items. 
@@ -35,7 +35,7 @@ const itemValidator = ajv.compile(itemSchema)
 
 // Cookie parser
 const cookieParser = require('cookie-parser')
-itemsRouter.use(cookieParser(secrets.jwtSignKey));
+itemsRouter.use(cookieParser(secrets.process.env.jwtSignKey));
 
 // itemValidateMW - Is used to validate the item information.
 const itemValidateMW = (req, res, next) => {
@@ -54,7 +54,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt
 
 let jwtValidationOptions = {}
 jwtValidationOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
-jwtValidationOptions.secretOrKey = secrets.jwtSignKey
+jwtValidationOptions.secretOrKey = process.env.jwtSignKey
 
 passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) {
   const user = users.find(u => u.id === jwt_payload.userId)
