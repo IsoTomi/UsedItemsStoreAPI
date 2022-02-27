@@ -69,6 +69,8 @@ itemsRouter.get('/search', (req, res) => {
 
   let filteredItems = []
 
+  res.send(location)
+
   if (location) {
     filteredItems = items.filter(item => item.location === location )
   }
