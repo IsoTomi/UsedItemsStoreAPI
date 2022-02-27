@@ -69,7 +69,7 @@ itemsRouter.get('/search', (req, res) => {
 
   let filteredItems = []
 
-  if (query) {
+  if (location) {
     filteredItems = items.filter(item => item.location === location )
   }
 
