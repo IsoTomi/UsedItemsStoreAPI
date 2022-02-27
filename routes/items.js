@@ -62,7 +62,8 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
 }))
 
 itemsRouter.get('/search', (req, res) => {
-  res.json(items)
+  const query = req.query.query
+  res.send(query)
 })
 
 // GET / - Get All Item Info
