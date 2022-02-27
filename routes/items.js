@@ -150,7 +150,20 @@ itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemVali
   }
 })
 
-// TODO: serach - operation
+itemsRouter.post('/search', (req, res) => {
+  const query = req.query.query
+  const category = req.query.category
+  const location = req.query.location
+  const date = req.query.date
+
+  let filteredItems = []
+
+  if (query) {
+    filteredItems = items.title.filter(query)
+  }
+
+  res.json(filteredItems)
+})
 
 // Export the router.
 module.exports = itemsRouter
