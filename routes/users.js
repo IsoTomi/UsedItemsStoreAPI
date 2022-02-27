@@ -52,9 +52,6 @@ service.onAddItem((userId, itemId) => {
 service.onRemoveItem((userId, itemId) => {
   const user = users.find(user => user.id === userId)
   user.items = user.items.filter( item => item.id !== itemId) 
-  console.log(user)
-  console.log(itemId)
-  console.log(user.items)
 })
 
 // JSON body-parser middleware. Express 4.16+ has it's own body-parser

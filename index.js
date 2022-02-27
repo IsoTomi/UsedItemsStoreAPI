@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const secrets = require('./secrets.json')
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 80
 
 // JSON body-parser middleware. Express 4.16+ has it's own body-parser
 // so no third party package is needed.
