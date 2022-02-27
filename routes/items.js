@@ -150,7 +150,7 @@ itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemVali
   }
 })
 
-itemsRouter.post('/search', (req, res) => {
+itemsRouter.get('/search', (req, res) => {
   const query = req.query.query
   const category = req.query.category
   const location = req.query.location
