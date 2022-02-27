@@ -8,17 +8,17 @@ const service = require('../sharedService')
 let items = [
   {
     id: 1,
-    title : "Asus Geforce Rtx 3070 8gb oc",
-    description : "Takuu voimassa 05/24. Ei lhr malli.",
-    category : "Näytönohjaimet",
-    askingPrice : 1000.00,
+    title: "Asus Geforce Rtx 3070 8gb oc",
+    description: "Takuu voimassa 05/24. Ei lhr malli.",
+    category: "Näytönohjaimet",
+    askingPrice: 1000.00,
     // TODO: Ota aika Date-oliosta
-    dateOfPosting : "2022-02-26",
-    deliveryType : "Pickup",
-    sellerId : "",
-    city : "Oulu",
-    county : "Pohjois-Pohjanmaa",
-    country : "Finland",
+    dateOfPosting: "2022-02-26",
+    deliveryType: "Pickup",
+    sellerId: "",
+    city: "Oulu",
+    county: "Pohjois-Pohjanmaa",
+    country: "Finland",
   }
 ]
 
@@ -69,15 +69,23 @@ itemsRouter.get('/search', (req, res) => {
   let filteredItems = []
 
   if (category) {
-    filteredItems = items.filter(item => item.category === category )
+    filteredItems = items.filter(item => item.category === category)
   }
 
   if (city) {
-    filteredItems = items.filter(item => item.city === city )
+    if (filteredItems.length > 0) {
+      filteredItems = filteredItems.filter(item => item.city === city)
+    } else {
+      filteredItems = items.filter(item => item.city === city)
+    }
   }
 
   if (date) {
-    filteredItems = items.filter(item => item.dateOfPosting === date )
+    if (filteredItems.length > 0) {
+      filteredItems = filteredItems.filter(item => item.dateOfPosting === date)
+    } else {
+      filteredItems = items.filter(item => item.dateOfPosting === date)
+    }
   }
 
   res.json(filteredItems)
