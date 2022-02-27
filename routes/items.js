@@ -67,6 +67,8 @@ itemsRouter.get('/search', (req, res) => {
   const location = req.query.location
   const date = req.query.date
 
+  let filteredItems = []
+
   if (query) {
     filteredItems = items.filter(item => item.location === location )
   }
