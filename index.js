@@ -20,7 +20,7 @@ app.use('/items', items)
 
 // Cookie parser
 const cookieParser = require('cookie-parser')
-app.use(cookieParser(secrets.jwtSignKey));
+app.use(cookieParser(process.env.jwtSignKey));
 
 app.get("/", (req, res) => {
   res.send("Hello World!")
@@ -32,7 +32,7 @@ app.post('/signin', passport.authenticate('basic', { session: false }), (req, re
     userId: req.user.id
   }
 
-  const token = jwt.sign(payloadData, secrets.jwtSignKey)
+  const token = jwt.sign(payloadData, process.env.jwtSignKey)
   res.cookie('userId', req.user.id, {signed: true})
   res.json({ token: token })
 })
