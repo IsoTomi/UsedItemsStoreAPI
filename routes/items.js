@@ -64,7 +64,10 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
 itemsRouter.get('/search', (req, res) => {
   const category = req.query.category
   const city = req.query.city
+  const county = req.query.county
+  const country = req.query.country
   const date = req.query.date
+
 
   let filteredItems = items.map(item => {
     return {
@@ -77,27 +80,26 @@ itemsRouter.get('/search', (req, res) => {
     }
   })
 
-  /*
+
   if (category) {
-    filteredItems = items.filter(item => item.category === category)
+    filteredItems = filteredItems.filter(item => item.category === category)
   }
 
   if (city) {
-    if (filteredItems.length > 0) {
-      filteredItems = filteredItems.filter(item => item.city === city)
-    } else {
-      filteredItems = items.filter(item => item.city === city)
-    }
+    filteredItems = filteredItems.filter(item => item.city === city)
+  }
+
+  if (county) {
+    filteredItems = filteredItems.filter(item => item.county === county)
+  }
+
+  if (country) {
+    filteredItems = filteredItems.filter(item => item.country === country)
   }
 
   if (date) {
-    if (filteredItems.length > 0) {
-      filteredItems = filteredItems.filter(item => item.dateOfPosting === date)
-    } else {
-      filteredItems = items.filter(item => item.dateOfPosting === date)
-    }
+    filteredItems = filteredItems.filter(item => item.dateOfPosting === date)
   }
-  */
 
   res.json(filteredItems)
 })
