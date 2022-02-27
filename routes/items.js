@@ -64,15 +64,13 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
 itemsRouter.get('/search', (req, res) => {
   const query = req.query.query
   const category = req.query.category
-  const location = req.query.location
+  const city = req.query.city
   const date = req.query.date
 
   let filteredItems = []
 
-  res.send(location)
-
-  if (location) {
-    filteredItems = items.filter(item => item.location === location )
+  if (city) {
+    filteredItems = items.filter(item => item.city === city )
   }
 
   res.json(filteredItems)
