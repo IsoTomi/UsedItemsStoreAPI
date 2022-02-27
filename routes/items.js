@@ -66,8 +66,18 @@ itemsRouter.get('/search', (req, res) => {
   const city = req.query.city
   const date = req.query.date
 
-  let filteredItems = []
+  let filteredItems = items.map(item => {
+    return {
+      id: item.id,
+      category: item.category,
+      dateOfPosting: item.dateOfPosting,
+      city: item.city,
+      county: item.county,
+      country: item.country
+    }
+  })
 
+  /*
   if (category) {
     filteredItems = items.filter(item => item.category === category)
   }
@@ -87,6 +97,7 @@ itemsRouter.get('/search', (req, res) => {
       filteredItems = items.filter(item => item.dateOfPosting === date)
     }
   }
+  */
 
   res.json(filteredItems)
 })
