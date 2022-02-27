@@ -101,13 +101,7 @@ itemsRouter.get('/search', (req, res) => {
     filteredItems = filteredItems.filter(item => item.dateOfPosting === date)
   }
 
-  let results = []
-
-  filteredItems.forEach(item => {
-    results.push(items.find(i => i.id === item.id ))
-  })
-
-  res.json(results)
+  res.json(filteredItems)
 })
 
 // GET / - Get All Item Info
