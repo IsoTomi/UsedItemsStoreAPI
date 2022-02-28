@@ -5,9 +5,9 @@ const bcrypt = require('bcryptjs')
 const usersRouter = express.Router()
 
 // JWT signature key
-/*const secrets = require('../secrets.json')
-const secret = secrets.jwtSignKey*/
-const secret = process.env.jwtSignKey
+const secrets = require('../secrets.json')
+const secret = secrets.jwtSignKey
+//const secret = process.env.jwtSignKey
 
 // users - Array for storing information about the users. 
 // It's been populated by some example users.
@@ -49,13 +49,13 @@ const service = require('../sharedService')
 
 service.onAddItem((userId, itemId) => {
   const user = users.find(user => user.id === userId)
-  const item = {id: itemId}
+  const item = { id: itemId }
   user.items.push(item)
 })
 
 service.onRemoveItem((userId, itemId) => {
   const user = users.find(user => user.id === userId)
-  user.items = user.items.filter( item => item.id !== itemId) 
+  user.items = user.items.filter(item => item.id !== itemId)
 })
 
 // JSON body-parser middleware. Express 4.16+ has it's own body-parser
@@ -129,11 +129,19 @@ const itemValidateMW = (req, res, next) => {
   }
 }
 
-
 // GET / - Get All User Info
-// NOTE: Remove passwords 
 usersRouter.get('/', (req, res) => {
-  res.json(users)
+  let filteredUsers = users.map(user => {
+    return {
+      id: user.id,
+      username: user.username,
+      city: user.city,
+      county: user.county,
+      country: user.country
+    }
+  })
+
+  res.json(filteredUsers)
 })
 
 // GET /:userId - Get User Info by User ID
@@ -189,27 +197,32 @@ usersRouter.put('/:userId', passport.authenticate('jwt', { session: false }), us
 
 // POST / - Create a New User
 usersRouter.post('/', userValidateMW, (req, res) => {
-  // TODO: Check if the username is already in use.
+  const userFound = users.find(user => user.username === req.body.username)
+  
+  if (userFound) {
+    res.sendStatus(409)
+  } else {
+    // Hash the password.
+    const salt = bcrypt.genSaltSync(6)
+    const hashedPassword = bcrypt.hashSync(req.body.password, salt)
 
-  // Hash the password.
-  const salt = bcrypt.genSaltSync(6)
-  const hashedPassword = bcrypt.hashSync(req.body.password, salt)
+    // Push the new user.
+    users.push({
+      id: uuidv4(),
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      dateOfBirth: req.body.dateOfBirth,
+      city: req.body.city,
+      county: req.body.county,
+      country: req.body.country,
+      email: req.body.email,
+      username: req.body.username,
+      password: hashedPassword,
+      items: []
+    })
 
-  users.push({
-    id: uuidv4(),
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    dateOfBirth: req.body.dateOfBirth,
-    city: req.body.city,
-    county: req.body.county,
-    country: req.body.country,
-    email: req.body.email,
-    username: req.body.username,
-    password: hashedPassword,
-    items: []
-  })
-
-  res.sendStatus(201)
+    res.sendStatus(201)
+  }
 })
 
 // GET /:userId/items - Get User's item IDs

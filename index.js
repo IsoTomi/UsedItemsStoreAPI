@@ -3,9 +3,9 @@ const passport = require('passport')
 const jwt = require('jsonwebtoken')
 
 // JWT signature key
-/*const secrets = require('./secrets.json')
-const secret = secrets.jwtSignKey*/
-const secret = process.env.jwtSignKey
+const secrets = require('./secrets.json')
+const secret = secrets.jwtSignKey
+//const secret = process.env.jwtSignKey
 
 const app = express()
 const port = process.env.PORT || 80
