@@ -130,6 +130,7 @@ const itemValidateMW = (req, res, next) => {
 }
 
 // GET / - Get All User Info
+// TESTING PURPOSE ONLY!
 usersRouter.get('/', (req, res) => {
   let filteredUsers = users.map(user => {
     return {
@@ -150,8 +151,16 @@ usersRouter.get('/:userId', (req, res) => {
   const user = users.find(user => user.id === id)
 
   if (user) {
-    res.json(user)
-    res.sendStatus(200)
+    const filteredUser = {
+      id: user.id,
+      username: user.username,
+      city: user.city,
+      county: user.county,
+      country: user.country,
+      items: user.items
+    }
+
+    res.json(filteredUser)
   } else {
     res.sendStatus(404)
   }
@@ -198,7 +207,7 @@ usersRouter.put('/:userId', passport.authenticate('jwt', { session: false }), us
 // POST / - Create a New User
 usersRouter.post('/', userValidateMW, (req, res) => {
   const userFound = users.find(user => user.username === req.body.username)
-  
+
   if (userFound) {
     res.sendStatus(409)
   } else {

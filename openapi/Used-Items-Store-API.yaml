@@ -1,0 +1,438 @@
+openapi: 3.1.0
+info:
+  title: Used Items Store API
+  version: '1.0'
+  contact: {}
+  summary: Used Items Store API
+  description: ''
+servers:
+  - url: 'https://used-item-store-api.herokuapp.com'
+    description: 'Tomi Isojärvi, Jimi Linnanen'
+paths:
+  /login:
+    post:
+      summary: Log In
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+              examples: {}
+        '401':
+          description: Unauthorized
+      description: 'Log in operation. Returns the JSON Web Token if response 200 OK. If authorization failes, 401 Unauthorized is sent.'
+      security:
+        - HTTP Basic Auth: []
+  /users:
+    post:
+      summary: Create a New User
+      operationId: post-user
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      description: 'Create a new user. Responses: 200 if OK, 400 if bad request. 409 if username already been taken.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples: {}
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: User info without the user ID.
+    parameters: []
+    get:
+      summary: Get Users' Info
+      operationId: get-users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    username:
+                      type: string
+                    city:
+                      type: string
+                    county:
+                      type: string
+                    country:
+                      type: string
+      description: 'TESTING PURPOSE ONLY: Get all users'' user ID, username, and location.'
+  '/users/:{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  username:
+                    type: string
+                  city:
+                    type: string
+                  county:
+                    type: string
+                  country:
+                    type: string
+      operationId: get-users-userId
+      description: 'Retrieve the information of the user with the matching user ID. Only matching id, it''s username and location, and item IDs are sent.'
+    put:
+      summary: Update User Info by User ID
+      operationId: put-users-userId
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+      description: Update the information of the user with the matching user ID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: ''
+    delete:
+      summary: Delete User Info by User ID
+      operationId: delete-users-userId
+      responses:
+        '202':
+          description: Accepted
+        '404':
+          description: Not Found
+      description: Delete the information of the user with the matching user ID.
+  '/users/{userId}/items':
+    parameters:
+      - schema:
+          type: string
+          format: int64
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User's Items
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+        '404':
+          description: Not Found
+      operationId: get-users-userId-items
+    put:
+      summary: ''
+      operationId: put-users-userId-items
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: ''
+      operationId: delete-users-userId-items
+      responses:
+        '200':
+          description: OK
+  '/items/{itemId}':
+    parameters:
+      - schema:
+          type: number
+        name: itemId
+        in: path
+        required: true
+        description: Id of an existing item.
+    get:
+      summary: Get Item Info by Item ID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Not Found
+      operationId: get-items-itemId
+      description: Retrieve the information of the item with the matching item ID.
+    put:
+      summary: Update Item Info by Item ID
+      operationId: put-items-itemId
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+      description: Update the information of the item with the matching item ID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Item'
+        description: ''
+    delete:
+      summary: Delete Item Info by Item ID
+      operationId: delete-items-itemId
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      description: Delete the information of the item with the matching item ID.
+  /items:
+    post:
+      summary: Create a New Item
+      operationId: post-items
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      description: Create a new item.
+    parameters: []
+  /items/search/:
+    get:
+      summary: Search Items
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+        '204':
+          description: No Content
+      operationId: get-items-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: category
+          description: Category of an item
+        - schema:
+            type: string
+          in: query
+          name: location
+          description: Location of an item
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: dateOfPosting
+          description: Date of posting
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: Search string
+      description: 'Search items from the store. '
+    parameters: []
+components:
+  schemas:
+    User:
+      examples:
+        - {}
+        - {}
+      type: object
+      description: User registration information
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+          description: User's firstname
+        lastName:
+          type: string
+          description: User's lastname
+        dateOfBirth:
+          type: string
+          format: date
+          example: '2022-02-23'
+          description: User's date of birth in ISO8601 format
+        city:
+          type: string
+          description: User - City
+        county:
+          type: string
+          description: User - County
+        country:
+          type: string
+          description: User - Country
+        email:
+          type: string
+          description: User's email address
+          format: email
+          example: example@example.com
+        username:
+          type: string
+          description: User's username
+        password:
+          type: string
+          description: User's password
+          format: password
+      required:
+        - firstName
+        - lastName
+        - dateOfBirth
+        - city
+        - county
+        - country
+        - email
+        - username
+        - password
+    Item:
+      title: Item
+      type: object
+      description: Item information
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          description: Title of an item
+        description:
+          type: string
+          description: Description of an item
+        category:
+          type: string
+          description: Category of an item
+        images:
+          type: array
+          maxItems: 4
+          minItems: 0
+          description: Array of image URIs
+          items:
+            type: string
+            format: uri
+        askingPrice:
+          type: number
+          description: The asking price
+        dateOfPosting:
+          type: string
+          format: date-time
+          description: Date of posting
+        deliveryType:
+          description: Delivery type
+          type: string
+        userId:
+          type: integer
+          format: int64
+          description: The seller's id
+        city:
+          type: string
+          description: City location of an item
+        county:
+          type: string
+          description: County location of an item
+        country:
+          type: string
+          description: Country location of an item
+      required:
+        - title
+        - description
+        - category
+        - images
+        - askingPrice
+        - dateOfPosting
+        - deliveryType
+        - userId
+        - city
+        - county
+        - country
+    Items:
+      title: Items
+      type: array
+      items:
+        $ref: '#/components/schemas/Item'
+      description: Array of items
+    Error:
+      title: Error
+      type: object
+      description: Model for errors
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: Error code
+        message:
+          type: string
+          description: Error message
+      required:
+        - code
+        - message
+  securitySchemes:
+    HTTP Basic Auth:
+      type: http
+      scheme: basic
+      description: Basic access authentication
+    JSON Web Token:
+      type: http
+      scheme: bearer
+      description: JSON Web Token
+security:
+  - API Key - 1: []
