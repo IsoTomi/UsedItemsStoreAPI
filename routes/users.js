@@ -3,9 +3,11 @@ const { v4: uuidv4 } = require('uuid')
 const passport = require('passport')
 const bcrypt = require('bcryptjs')
 const usersRouter = express.Router()
-const secrets = require('../secrets.json')
-const secret = secrets.jwtSignKey
-//const secret = process.env.jwtSignKey
+
+// JWT signature key
+/*const secrets = require('../secrets.json')
+const secret = secrets.jwtSignKey*/
+const secret = process.env.jwtSignKey
 
 // users - Array for storing information about the users. 
 // It's been populated by some example users.
