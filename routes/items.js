@@ -1,9 +1,10 @@
 const express = require('express')
 const itemsRouter = express.Router()
-//const secrets = require('../secrets.json')
 const service = require('../sharedService')
-// const secret = secrets.jwtSignKey
-const secret = process.env.jwtSignKey
+
+const secrets = require('../secrets.json')
+const secret = secrets.jwtSignKey
+//const secret = process.env.jwtSignKey
 
 // items - Array for storing information about the items. 
 // It's been populated by some example items.
