@@ -2,6 +2,8 @@ const express = require('express')
 const itemsRouter = express.Router()
 //const secrets = require('../secrets.json')
 const service = require('../sharedService')
+// const secret = secrets.jwtSignKey
+const secret = process.env.jwtSignKey
 
 // items - Array for storing information about the items. 
 // It's been populated by some example items.
@@ -35,7 +37,7 @@ const itemValidator = ajv.compile(itemSchema)
 
 // Cookie parser
 const cookieParser = require('cookie-parser')
-itemsRouter.use(cookieParser(process.env.jwtSignKey));
+itemsRouter.use(cookieParser(secret));
 
 // itemValidateMW - Is used to validate the item information.
 const itemValidateMW = (req, res, next) => {
@@ -54,7 +56,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt
 
 let jwtValidationOptions = {}
 jwtValidationOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
-jwtValidationOptions.secretOrKey = process.env.jwtSignKey
+jwtValidationOptions.secretOrKey = secret
 
 passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) {
   const user = users.find(u => u.id === jwt_payload.userId)
@@ -168,7 +170,7 @@ itemsRouter.put('/:itemId', passport.authenticate('jwt', { session: false }), it
 // POST /items - Create a New item. JSON Web Token needed. Cookie with signed userID needed.
 itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemValidateMW, (req, res) => {
   const userId = req.signedCookies['userId']
-  const itemId = items.length + 1
+  const itemId = items.length + 1 // KORJAA!!!!
 
   if (userId) {
     items.push({

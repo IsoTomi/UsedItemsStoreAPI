@@ -4,6 +4,8 @@ const passport = require('passport')
 const bcrypt = require('bcryptjs')
 const usersRouter = express.Router()
 //const secrets = require('../secrets.json')
+// const secret = secrets.jwtSignKey
+const secret = process.env.jwtSignKey
 
 // users - Array for storing information about the users. 
 // It's been populated by some example users.
@@ -93,7 +95,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt
 
 let jwtValidationOptions = {}
 jwtValidationOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
-jwtValidationOptions.secretOrKey = process.env.jwtSignKey
+jwtValidationOptions.secretOrKey = secret
 
 passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) {
   const user = users.find(u => u.id === jwt_payload.userId)
@@ -102,7 +104,7 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
 
 // Cookie parser
 const cookieParser = require('cookie-parser')
-usersRouter.use(cookieParser(process.env.jwtSignKey));
+usersRouter.use(cookieParser(secret));
 
 // My middlewares
 // userValidateMW - Is used to validate the user information.
@@ -127,7 +129,7 @@ const itemValidateMW = (req, res, next) => {
 
 
 // GET / - Get All User Info
-// NOTE: Test purpose only.
+// NOTE: Remove passwords 
 usersRouter.get('/', (req, res) => {
   res.json(users)
 })

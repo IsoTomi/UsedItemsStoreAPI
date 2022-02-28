@@ -2,7 +2,9 @@ const express = require('express')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
 
-//const secrets = require('./secrets.json')
+// const secrets = require('./secrets.json')
+// const secret = secrets.jwtSignKey
+const secret = process.env.jwtSignKey
 
 const app = express()
 const port = process.env.PORT || 80
@@ -20,7 +22,7 @@ app.use('/items', items)
 
 // Cookie parser
 const cookieParser = require('cookie-parser')
-app.use(cookieParser(process.env.jwtSignKey));
+app.use(cookieParser(secret));
 
 app.get("/", (req, res) => {
   res.send("Hello World!")
@@ -32,7 +34,7 @@ app.post('/signin', passport.authenticate('basic', { session: false }), (req, re
     userId: req.user.id
   }
 
-  const token = jwt.sign(payloadData, process.env.jwtSignKey)
+  const token = jwt.sign(payloadData, secret)
   res.cookie('userId', req.user.id, {signed: true})
   res.json({ token: token })
 })
