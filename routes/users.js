@@ -5,9 +5,9 @@ const bcrypt = require('bcryptjs')
 const usersRouter = express.Router()
 
 // JWT signature key
-const secrets = require('../secrets.json')
-const secret = secrets.jwtSignKey
-//const secret = process.env.jwtSignKey
+//const secrets = require('../secrets.json')
+//const secret = secrets.jwtSignKey
+const secret = process.env.jwtSignKey
 
 // users - Array for storing information about the users. 
 // It's been populated by some example users.
