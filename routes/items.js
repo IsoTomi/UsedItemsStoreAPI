@@ -121,7 +121,7 @@ itemsRouter.get('/', (req, res) => {
   res.json(items)
 })
 
-itemsRouter.post('/:itemId/images', parser.single('image'), (req, res) => {
+itemsRouter.post('/images', parser.single('image'), (req, res) => {
   console.log(req.file)
   res.send("moi")
   res.json(req.file)
@@ -209,9 +209,6 @@ itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemVali
     res.sendStatus(400)
   }
 })
-
-
-
 
 // Export the router.
 module.exports = itemsRouter
