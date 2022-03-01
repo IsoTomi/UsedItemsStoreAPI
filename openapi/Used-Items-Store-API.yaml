@@ -308,6 +308,44 @@ paths:
           description: Country
       description: 'Search items from the store. '
     parameters: []
+  '/items/:itemId/images':
+    get:
+      summary: Get Item Images
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      operationId: 'get-items-:itemId-imahes'
+      description: Returns an array of image URLS.
+    parameters: []
+    post:
+      summary: Add New Image to Item
+      operationId: 'post-items-:itemId-images'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: ''
+    delete:
+      summary: Delete Image from Item's Image List
+      operationId: 'delete-items-:itemId-images'
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
 components:
   schemas:
     User:
