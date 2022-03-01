@@ -121,6 +121,10 @@ itemsRouter.get('/', (req, res) => {
   res.json(items)
 })
 
+itemsRouter.post('/:itemId/images', parser.single('image'), (req, res) => {
+  res.json(req.file)
+})
+
 // GET /:itemId - Get Item Info by Item ID
 itemsRouter.get('/:itemId', (req, res) => {
   const id = req.params.itemId
@@ -175,10 +179,6 @@ itemsRouter.put('/:itemId', passport.authenticate('jwt', { session: false }), it
     res.sendStatus(404)
     res.end()
   }
-})
-
-itemsRouter.post('/:itemId/images', parser.single('image'), (req, res) => {
-  res.json(req.file)
 })
 
 // POST /items - Create a New item. JSON Web Token needed. Cookie with signed userID needed.
