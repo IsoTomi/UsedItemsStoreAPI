@@ -28,7 +28,7 @@ paths:
           description: Unauthorized
       description: 'Log in operation. Returns the JSON Web Token if response 200 OK. If authorization failes, 401 Unauthorized is sent.'
       security:
-        - HTTP Basic Auth: []
+        - HTTPBasicAuth: []
   /users:
     post:
       summary: Create a New User
@@ -108,20 +108,16 @@ paths:
                     type: string
                   country:
                     type: string
+        '404':
+          description: Not Found
       operationId: get-users-userId
-      description: 'Retrieve the information of the user with the matching user ID. Only matching id, it''s username and location, and item IDs are sent.'
+      description: 'Retrieve the information of the user with the matching user ID. Matching id, it''s username and location, and item IDs are sent. Response 404 is sent when user ID is not found.'
     put:
       summary: Update User Info by User ID
       operationId: put-users-userId
       responses:
         '202':
           description: Accepted
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
         '404':
           description: Not Found
       description: Update the information of the user with the matching user ID.
@@ -130,7 +126,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
-        description: ''
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: All the user information without the id.
+      security:
+        - JSONWebToken: []
     delete:
       summary: Delete User Info by User ID
       operationId: delete-users-userId
@@ -140,6 +142,9 @@ paths:
         '404':
           description: Not Found
       description: Delete the information of the user with the matching user ID.
+      security:
+        - JSONWebToken: []
+      parameters: []
   '/users/{userId}/items':
     parameters:
       - schema:
@@ -158,22 +163,51 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Items'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
         '404':
           description: Not Found
       operationId: get-users-userId-items
-    put:
-      summary: ''
-      operationId: put-users-userId-items
+      description: Get user's item IDs.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+        description: Array of item IDs.
+  /items:
+    post:
+      summary: Create a New Item
+      operationId: post-items
       responses:
-        '200':
-          description: OK
-    delete:
-      summary: ''
-      operationId: delete-users-userId-items
-      responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          description: Bad Request
+      description: Create a new item. Also adds the item ID to the user's item list.
+      security:
+        - JSONWebToken: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+        description: Item without the ID.
+    parameters: []
   '/items/{itemId}':
     parameters:
       - schema:
@@ -208,10 +242,6 @@ paths:
                 $ref: '#/components/schemas/Item'
         '400':
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
         '404':
           description: Not Found
       description: Update the information of the item with the matching item ID.
@@ -232,26 +262,7 @@ paths:
           description: OK
         '404':
           description: Not Found
-      description: Delete the information of the item with the matching item ID.
-  /items:
-    post:
-      summary: Create a New Item
-      operationId: post-items
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Item'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      description: Create a new item.
-    parameters: []
+      description: Delete the information of the item with the matching item ID. Also removes the item from the user's item list.
   /items/search/:
     get:
       summary: Search Items
@@ -262,7 +273,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Items'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
         '204':
           description: No Content
       operationId: get-items-search
@@ -274,20 +287,25 @@ paths:
           description: Category of an item
         - schema:
             type: string
-          in: query
-          name: location
-          description: Location of an item
-        - schema:
-            type: string
             format: date
           in: query
-          name: dateOfPosting
+          name: date
           description: Date of posting
         - schema:
             type: string
           in: query
-          name: query
-          description: Search string
+          name: city
+          description: City
+        - schema:
+            type: string
+          in: query
+          name: county
+          description: County
+        - schema:
+            type: string
+          in: query
+          name: country
+          description: Country
       description: 'Search items from the store. '
     parameters: []
 components:
@@ -404,33 +422,12 @@ components:
         - city
         - county
         - country
-    Items:
-      title: Items
-      type: array
-      items:
-        $ref: '#/components/schemas/Item'
-      description: Array of items
-    Error:
-      title: Error
-      type: object
-      description: Model for errors
-      properties:
-        code:
-          type: integer
-          format: int32
-          description: Error code
-        message:
-          type: string
-          description: Error message
-      required:
-        - code
-        - message
   securitySchemes:
-    HTTP Basic Auth:
+    HTTPBasicAuth:
       type: http
       scheme: basic
       description: Basic access authentication
-    JSON Web Token:
+    JSONWebToken:
       type: http
       scheme: bearer
       description: JSON Web Token

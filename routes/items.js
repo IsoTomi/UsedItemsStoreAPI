@@ -66,6 +66,7 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
   done(null, user)
 }))
 
+// GET /search - Search Items
 itemsRouter.get('/search', (req, res) => {
   const category = req.query.category
   const city = req.query.city
@@ -95,7 +96,11 @@ itemsRouter.get('/search', (req, res) => {
     filteredItems = filteredItems.filter(item => item.dateOfPosting === date)
   }
 
-  res.json(filteredItems)
+  if (filteredItems === []) {
+    res.sendStatus(204)
+  } else {
+    res.json(filteredItems)
+  }
 })
 
 // GET / - Get All Item Info
