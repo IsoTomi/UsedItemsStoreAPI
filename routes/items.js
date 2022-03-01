@@ -66,6 +66,19 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
   done(null, user)
 }))
 
+// Multer Cloudinary
+const cloudinary = require('cloudinary')
+const cloudinaryStorage = require('multer-storage-cloudinary')
+const multer = require('multer')
+
+const storage = cloudinaryStorage({
+  cloudinary: cloudinary,
+  folder: '',
+  allowedFormats: ['jpg', 'png']
+})
+
+const parser = multer({ storage: storage })
+
 // GET /search - Search Items
 itemsRouter.get('/search', (req, res) => {
   const category = req.query.category
@@ -164,6 +177,10 @@ itemsRouter.put('/:itemId', passport.authenticate('jwt', { session: false }), it
   }
 })
 
+itemsRouter.post('/:itemId/images', parser.single('image'), (req, res) => {
+  res.json(req.file)
+})
+
 // POST /items - Create a New item. JSON Web Token needed. Cookie with signed userID needed.
 itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemValidateMW, (req, res) => {
   const userId = req.signedCookies['userId']
@@ -190,6 +207,7 @@ itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemVali
     res.sendStatus(400)
   }
 })
+
 
 
 
