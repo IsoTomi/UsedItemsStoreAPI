@@ -122,6 +122,8 @@ itemsRouter.get('/', (req, res) => {
 })
 
 itemsRouter.post('/:itemId/images', parser.single('image'), (req, res) => {
+  console.log(req.file)
+  res.send("moi")
   res.json(req.file)
 })
 
