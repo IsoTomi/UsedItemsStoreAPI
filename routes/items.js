@@ -68,10 +68,10 @@ passport.use(new JwtStrategy(jwtValidationOptions, function (jwt_payload, done) 
 
 // Multer Cloudinary
 const cloudinary = require('cloudinary')
-const cloudinaryStorage = require('multer-storage-cloudinary')
+const { CloudinaryStorage } = require('multer-storage-cloudinary')
 const multer = require('multer')
 
-const storage = new cloudinaryStorage({
+const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   folder: '',
   allowedFormats: ['jpg', 'png']
