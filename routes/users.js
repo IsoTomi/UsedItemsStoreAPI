@@ -5,9 +5,9 @@ const bcrypt = require('bcryptjs')
 const usersRouter = express.Router()
 
 // JWT signature key
-//const secrets = require('../secrets.json')
-//const secret = secrets.jwtSignKey
-const secret = process.env.jwtSignKey
+const secrets = require('../secrets.json')
+const secret = secrets.jwtSignKey
+//const secret = process.env.jwtSignKey
 
 // users - Array for storing information about the users. 
 // It's been populated by some example users.
@@ -23,11 +23,7 @@ let users = [
     email: "matti.meikalainen@email.com",
     username: "MattiM",
     password: "#123456abcde",
-    items: [
-      {
-        id: 1
-      }
-    ]
+    items: []
   },
   {
     id: uuidv4(),
@@ -119,16 +115,6 @@ const userValidateMW = (req, res, next) => {
   }
 }
 
-// itemValidateMW - Is used to validate the item information.
-const itemValidateMW = (req, res, next) => {
-  const validationResult = itemValidator(req.body)
-  if (validationResult == true) {
-    next()
-  } else {
-    res.sendStatus(400)
-  }
-}
-
 // GET / - Get All User Info
 // TESTING PURPOSE ONLY!
 usersRouter.get('/', (req, res) => {
@@ -203,6 +189,7 @@ usersRouter.put('/:userId', passport.authenticate('jwt', { session: false }), us
     res.sendStatus(404)
   }
 })
+
 
 // POST / - Create a New User
 usersRouter.post('/', userValidateMW, (req, res) => {

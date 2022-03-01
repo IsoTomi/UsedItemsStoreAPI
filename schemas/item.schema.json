@@ -7,7 +7,7 @@
   "default": {},
   "examples": [
       {
-          "id": 345,
+          "id": "37679b4e-f297-491e-ad90-dda73a08f36f",
           "title": "Asus Geforce Rtx 3070 8gb oc",
           "description": "Takuu voimassa 05/24. Ei lhr malli.",
           "category": "Näytönohjaimet",
@@ -39,7 +39,7 @@
   "properties": {
       "id": {
           "$id": "#/properties/id",
-          "type": "integer",
+          "type": "string",
           "title": "The item id schema",
           "description": "Describes item's id property.",
           "default": "Id is unique value used to identify item.",

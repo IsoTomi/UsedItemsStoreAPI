@@ -1,17 +1,18 @@
 const express = require('express')
 const itemsRouter = express.Router()
 const service = require('../sharedService')
+const { v4: uuidv4 } = require('uuid')
 
 // JWT signature key
-//const secrets = require('../secrets.json')
-//const secret = secrets.jwtSignKey
-const secret = process.env.jwtSignKey
+const secrets = require('../secrets.json')
+const secret = secrets.jwtSignKey
+//const secret = process.env.jwtSignKey
 
 // items - Array for storing information about the items. 
 // It's been populated by some example items.
 let items = [
   {
-    id: 1,
+    id: uuidv4(),
     title: "Asus Geforce Rtx 3070 8gb oc",
     description: "Takuu voimassa 05/24. Ei lhr malli.",
     category: "Näytönohjaimet",
@@ -72,18 +73,7 @@ itemsRouter.get('/search', (req, res) => {
   const country = req.query.country
   const date = req.query.date
 
-
-  let filteredItems = items.map(item => {
-    return {
-      id: item.id,
-      category: item.category,
-      dateOfPosting: item.dateOfPosting,
-      city: item.city,
-      county: item.county,
-      country: item.country
-    }
-  })
-
+  let filteredItems = items
 
   if (category) {
     filteredItems = filteredItems.filter(item => item.category === category)
@@ -115,7 +105,7 @@ itemsRouter.get('/', (req, res) => {
 
 // GET /:itemId - Get Item Info by Item ID
 itemsRouter.get('/:itemId', (req, res) => {
-  const id = parseInt(req.params.itemId)
+  const id = req.params.itemId
   const item = items.find(item => item.id === id)
 
   if (item) {
@@ -129,7 +119,7 @@ itemsRouter.get('/:itemId', (req, res) => {
 // DELETE /:itemId - Delete Item Info by Item ID. User's JSON Web Token needed. Cookie with signed userID needed.
 itemsRouter.delete('/:itemId', passport.authenticate('jwt', { session: false }), (req, res) => {
   const userId = req.signedCookies['userId']
-  const itemId = parseInt(req.params.itemId)
+  const itemId = req.params.itemId
   const item = items.find(item => item.id === itemId)
 
   if (item && item.sellerId === userId) {
@@ -146,7 +136,7 @@ itemsRouter.delete('/:itemId', passport.authenticate('jwt', { session: false }),
 // PUT /:itemId - Update Item Info by Item ID. JSON Web Token needed. Cookie with signed userID needed.
 itemsRouter.put('/:itemId', passport.authenticate('jwt', { session: false }), itemValidateMW, (req, res) => {
   const userId = req.signedCookies['userId']
-  const itemId = parseInt(req.params.itemId)
+  const itemId = req.params.itemId
 
   let item = items.find(item => item.id === itemId)
 
@@ -176,7 +166,7 @@ itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemVali
 
   if (userId) {
     items.push({
-      id: itemId,
+      id: uuidv4(),
       title: req.body.title,
       description: req.body.description,
       category: req.body.category,
