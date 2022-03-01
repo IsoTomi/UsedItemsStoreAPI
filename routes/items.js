@@ -77,6 +77,14 @@ const storage = new CloudinaryStorage({
   allowedFormats: ['jpg', 'png']
 })
 
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: '',
+    allowedFormats: ['jpg', 'png']
+  },
+});
+
 const parser = multer({ storage: storage })
 
 // GET /search - Search Items
@@ -122,7 +130,6 @@ itemsRouter.get('/', (req, res) => {
 })
 
 itemsRouter.post('/images', parser.single('image'), (req, res) => {
-  console.log(req.file)
   res.send("moi")
   res.json(req.file)
 })
