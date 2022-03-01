@@ -162,7 +162,6 @@ itemsRouter.put('/:itemId', passport.authenticate('jwt', { session: false }), it
 // POST /items - Create a New item. JSON Web Token needed. Cookie with signed userID needed.
 itemsRouter.post('/', passport.authenticate('jwt', { session: false }), itemValidateMW, (req, res) => {
   const userId = req.signedCookies['userId']
-  const itemId = items.length + 1 // KORJAA!!!!
 
   if (userId) {
     items.push({
